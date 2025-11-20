@@ -2,9 +2,11 @@
 #include <stdlib.h>
 
 void pdeia(int** array, int size, int* colSize) {
+	if(!array) return;
 	printf("[");
 	for (int i = 0 ; i < size ; i++) {
-		printf("["); 	 		 
+		printf("["); 
+		if (!colSize[i]) return;
 		for(int j = 0 ; j < colSize[i] ; j++) {
 			printf("%d", array[i][j]);
 			if (j < colSize[i] - 1) 
@@ -33,7 +35,12 @@ int main() {
 	for (int i = 0 ; i < intervalSize ; i++) {
 
 		printf("Enter the %d interval column size : ", i + 1); 
-		scanf("%d", &intervalColSize[i]);
+		scanf("%d", &intervalColSize[i]);		
+		if (intervalColSize[i] < 1) {
+			printf("Error : The subarray must have a length of at least 1");
+			break;
+		}
+		
 
 		intervals[i] = malloc(intervalColSize[i] * sizeof(int));
 
@@ -48,8 +55,11 @@ int main() {
 
 	for (int i = 0 ; i < intervalSize ; i++) 
 		free(intervals[i]);
+	printf("Freed intervals[i]");
 
 	free(intervalColSize);
+	printf("Freed intervalColSize");
 	free(intervals);
+	printf("Freed intervals");
 	return 0;
 }
