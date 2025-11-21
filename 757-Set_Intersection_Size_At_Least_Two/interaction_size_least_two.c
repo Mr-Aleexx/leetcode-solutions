@@ -1,12 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define KRED  "\x1B[31m"
+#define RESET "\x1B[0m"
+
+int check_valid_malloc(int* array, int size) {
+	for (int i = 0 ; i < size ; i++) {
+		if (!array[i]) {
+			printf(KRED"Error : "  RESET "could not print array[%d], try checking if your correctly assigned it\n"  ,i);
+			return -1;
+		}
+	}
+	return 1;
+}
+
+
 void pdeia(int** array, int size, int* colSize) {
 	if(!array) return;
+	if (check_valid_malloc(colSize, size) != 1) return;
 	printf("[");
 	for (int i = 0 ; i < size ; i++) {
 		printf("["); 
-		if (!colSize[i]) return;
 		for(int j = 0 ; j < colSize[i] ; j++) {
 			printf("%d", array[i][j]);
 			if (j < colSize[i] - 1) 
@@ -36,8 +50,8 @@ int main() {
 
 		printf("Enter the %d interval column size : ", i + 1); 
 		scanf("%d", &intervalColSize[i]);		
-		if (intervalColSize[i] < 1) {
-			printf("Error : The subarray must have a length of at least 1");
+		if (intervalColSize[i] < 0) {
+			printf( KRED "Error : " RESET "The subarray must have a length of at least 1\n");
 			break;
 		}
 		
@@ -53,13 +67,15 @@ int main() {
 	}
 	pdeia(intervals, intervalSize, intervalColSize);
 
-	for (int i = 0 ; i < intervalSize ; i++) 
+	for (int i = 0 ; i < intervalSize ; i++) {
 		free(intervals[i]);
-	printf("Freed intervals[i]");
+		printf("Freed intervals[%d]\n", i);
+	}
+	
 
 	free(intervalColSize);
-	printf("Freed intervalColSize");
+	printf("Freed intervalColSize\n");
 	free(intervals);
-	printf("Freed intervals");
+	printf("Freed intervals\n");
 	return 0;
 }
