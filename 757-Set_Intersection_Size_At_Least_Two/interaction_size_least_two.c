@@ -74,7 +74,7 @@ void pdeia(int** array, int size, int* colSize) {
 }
 
 int intersectionSizeTwo(int **intervals, int intervalsSize, int *intervalsColSize) {
-
+	
 }
 
 int main() {
