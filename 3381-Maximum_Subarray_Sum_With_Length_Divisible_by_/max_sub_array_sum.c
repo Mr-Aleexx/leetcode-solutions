@@ -2,10 +2,19 @@
 
 
 long long maxSubarraySum(int* nums, int numsSize, int k) {
-    long long res;
+	
+	long long min_prefix[k];
+	for (int i = 0 ; i < numsSize ; i++) {
+		min_prefix[i] = 0;
+	}
 
 
-	return res;
+	long long res;
+	
+    for(int i = 0 ; i < numsSize ; i++) {
+		
+	}
+	return res;	
 }
 
 
