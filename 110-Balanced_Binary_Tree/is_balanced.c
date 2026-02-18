@@ -67,7 +67,11 @@ int main () {
         );
 
 
-    printf("balanced: %s\n", isBalanced(root) ? "true" : "false");
+    printf("balanced: %s\n", isBalanced(root) ? "true" : "false");    
+        
+    int a = 9; // 1001
+    int b = a & (a >> 1); // 1001 & 0100
+    printf("%d\n", b);
 
     return 0;
 }
