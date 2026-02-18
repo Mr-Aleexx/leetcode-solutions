@@ -34,6 +34,7 @@ int dfs(struct tree_node* node) {
     iterations++;
     printf("iterations : %d\n", iterations);
     if (node == NULL) {
+        printf("here\n");
         return 0;
     }
 
@@ -43,7 +44,7 @@ int dfs(struct tree_node* node) {
     if (abs(left - right) > 1) {
         balanced = false;
     }
-    //printf("ret : %d\n",(left > right ? left : right) + 1);
+    printf("ret : %d\n",(left > right ? left : right) + 1);
     return (left > right ? left : right) + 1;
 }
 

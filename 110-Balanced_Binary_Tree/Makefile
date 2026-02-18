@@ -8,7 +8,7 @@ run: clock
 	./is_balanced
 
 clock:
-	$(CC) -o id_balanced is_balanced.c $(CFLAGS) 
+	$(CC) -o is_balanced is_balanced.c $(CFLAGS) 
 
 debug:
 	$(CC) -o is_balanced is_balanced.c $(CFLAGS)  $(DEBUG_FLAGS)
