@@ -2,9 +2,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
+#include <time.h>
 
-#define TABLE_SIZE 20000
+#define TABLE_SIZE 100000
 
+typedef int8_t i8;
+typedef int16_t i16;
+typedef int32_t i32;
+typedef int64_t i64;
+
+typedef uint8_t u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
+
+// entry of the table consisting of :
+//	-key
+//	-value
+//	-pointer to the next entry
 typedef struct entry_t{
     char *key;
     char *value;
@@ -15,61 +31,67 @@ typedef struct {
     entry_t **entries;
 } ht_t;
 
-unsigned int hash(const char *key) {
-    unsigned long int value = 0;
-    unsigned int i = 0;
-    unsigned int key_len = strlen(key);
 
-    // do several rounds of multiplication
-    for (; i < key_len; ++i) {
+ht_t* ht_create(void);
+u32 hash(const char* key);
+entry_t *ht_pair(const char *key, const char *value);
+void ht_set(ht_t *hashtable, const char *key, const char *value);
+char *ht_get(ht_t *hashtable, const char *key);
+void ht_del(ht_t *hashtable, const char* key);
+void ht_dump(ht_t *hashtable);
+
+void random_string(char* s, size_t n);
+
+// Hashing string
+u32 hash(const char *key) {
+    u64 value = 0;
+    u32 key_len = strlen(key);
+
+    for (u64 i = 0; i < key_len; ++i) {
         value = value * 37 + key[i];
     }
 
-    // make sure value is 0 <= value < TABLE_SIZE
     value = value % TABLE_SIZE;
 
     return value;
 }
 
-entry_t *ht_pair(const char *key, const char *value) {
-    // allocate the entry
-    entry_t *entry = malloc(sizeof(entry_t) * 1);
-    entry->key = malloc(strlen(key) + 1);
-    entry->value = malloc(strlen(value) + 1);
 
-    // copy the key and value in place
-    strcpy(entry->key, key);
-    strcpy(entry->value, value);
-
-    // next starts out null but may be set later on
-    entry->next = NULL;
-
-    return entry;
-}
-
+// Allocates the hashtable and it's entries (pointers and all setted to NULL)
 ht_t *ht_create(void) {
-    // allocate table
     ht_t *hashtable = malloc(sizeof(ht_t) * 1);
 
-    // allocate table entries
     hashtable->entries = malloc(sizeof(entry_t*) * TABLE_SIZE);
 
-    // set each to null (needed for proper operation)
-    int i = 0;
-    for (; i < TABLE_SIZE; ++i) {
+    for (int i = 0; i < TABLE_SIZE; ++i) {
         hashtable->entries[i] = NULL;
     }
 
     return hashtable;
 }
 
+
+// Allocates the entry pointer and set it's key,value pair
+// set the next entry to null
+entry_t *ht_pair(const char *key, const char *value) {
+    entry_t *entry = malloc(sizeof(entry_t) * 1);
+
+    entry->key   = malloc(strlen(key) + 1);
+    entry->value = malloc(strlen(value) + 1);
+
+    strcpy(entry->key, key);
+    strcpy(entry->value, value);
+
+    entry->next = NULL;
+
+    return entry;
+}
+
+
 void ht_set(ht_t *hashtable, const char *key, const char *value) {
-    unsigned int slot = hash(key);
+    u32 slot = hash(key);
 
-    // try to look up an entry set
     entry_t *entry = hashtable->entries[slot];
-
-    // no entry means slot empty, insert immediately
     if (entry == NULL) {
         hashtable->entries[slot] = ht_pair(key, value);
         return;
@@ -77,12 +99,8 @@ void ht_set(ht_t *hashtable, const char *key, const char *value) {
 
     entry_t *prev;
 
-    // walk through each entry until either the end is
-    // reached or a matching key is found
     while (entry != NULL) {
-        // check key
         if (strcmp(entry->key, key) == 0) {
-            // match found, replace value
             free(entry->value);
             entry->value = malloc(strlen(value) + 1);
             strcpy(entry->value, value);
@@ -99,7 +117,7 @@ void ht_set(ht_t *hashtable, const char *key, const char *value) {
 }
 
 char *ht_get(ht_t *hashtable, const char *key) {
-    unsigned int slot = hash(key);
+    u32 slot = hash(key);
 
     // try to find a valid slot
     entry_t *entry = hashtable->entries[slot];
@@ -125,7 +143,7 @@ char *ht_get(ht_t *hashtable, const char *key) {
 }
 
 void ht_del(ht_t *hashtable, const char *key) {
-    unsigned int bucket = hash(key);
+    u32 bucket = hash(key);
 
     // try to find a valid bucket
     entry_t *entry = hashtable->entries[bucket];
@@ -188,7 +206,7 @@ void ht_dump(ht_t *hashtable) {
 
         printf("slot[%4d]: ", i);
 
-        for(;;) {
+        while(1) {
             printf("%s=%s ", entry->key, entry->value);
 
             if (entry->next == NULL) {
@@ -202,18 +220,35 @@ void ht_dump(ht_t *hashtable) {
     }
 }
 
-int main(int argc, char **argv) {
+void random_string(char* s, size_t n) {
+
+    char charset[] = "0123456789"
+                     "abcdefghijklmnopqrstuvwxyz"
+                     "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+
+    while (n-- > 0) {
+        size_t index = (double) rand() / RAND_MAX * (sizeof charset - 1);
+        *s++ = charset[index];
+    }
+}
+
+
+int main() {
+
     ht_t *ht = ht_create();
 
-    ht_set(ht, "name1", "em");
-    ht_set(ht, "name2", "russian");
-    ht_set(ht, "name3", "pizza");
-    ht_set(ht, "name4", "doge");
-    ht_set(ht, "name5", "pyro");
-    ht_set(ht, "name6", "joost");
-    ht_set(ht, "name7", "kalix");
+    char key[] = { [5] = '\0' };
+    char value[] = { [5] = '\0' };
+    for (int i = 0 ; i < 100000 ; i++) {
+	random_string(key, 5);
+	random_string(value, 5);
+	ht_set(ht, key, value);
+    }
 
     ht_dump(ht);
+
+    printf("name1 = %s\n", ht_get(ht,"jvsvN"));
 
     return 0;
 }

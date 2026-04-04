@@ -32,12 +32,14 @@ HashTable* create_ht() {
     HashTable* ht = malloc(sizeof(HashTable) * 1);
     ht->entries   = malloc(sizeof(entry*) * TABLE_SIZE);
     
-    for (int i= 0 ; i < TABLE_SIZE ; i++) {
+    for (u32 i= 0 ; i < TABLE_SIZE ; i++) {
         ht->entries[i] = NULL;
     }
     return ht;
 }
 
+
+//hashing the key
 u32 hash(const char* key) {
     u64 value = 0;
     u32 key_len = strlen(key);
