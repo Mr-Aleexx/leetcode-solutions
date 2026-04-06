@@ -226,7 +226,6 @@ void random_string(char* s, size_t n) {
                      "abcdefghijklmnopqrstuvwxyz"
                      "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-
     while (n-- > 0) {
         size_t index = (double) rand() / RAND_MAX * (sizeof charset - 1);
         *s++ = charset[index];

@@ -4,7 +4,7 @@ DEBUG_CFLAGS = -DDEBUG -g -O0 -fsanitize=address
 
 all: run
 
-run: clock
+run: longest_sequence
 	./longest_sequence
 
 clock:
