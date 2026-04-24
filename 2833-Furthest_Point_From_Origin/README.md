@@ -25,8 +25,8 @@ This approach is fairly simple
 
 If there's more right (R) we want :
 - All the rights (R)
-- Plus the difference of the length minus all the directions (R,L)
-- Substracting lefts (L) because we computed the maximum length we can reach in one direction. Without considering the opposite ones.
+- Plus the difference of the length and all the directions (R,L)
+- Substracting lefts (L) because we computed the maximum length we can reach in one direction so far. Without considering the opposite ones.
 
 Details of the formula : 
 
